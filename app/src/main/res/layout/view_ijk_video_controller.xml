@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 标题栏 -->
+    <com.example.ijk.player.IjkVideoControllerTopView
+        android:id="@+id/videoControllerTopView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@drawable/shape_player_controller_top_bg"
+        android:fitsSystemWindows="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="@dimen/exo_icon_horizontal_margin" />
+
+    <!-- 亮度、音量 -->
+    <com.example.ijk.player.IjkVideoControllerCenterView
+        android:id="@+id/videoControllerCenterView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+    <!-- 锁定 -->
+    <com.example.ijk.player.IjkVideoControllerLockView
+        android:id="@+id/videoControllerLockView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="@dimen/exo_icon_horizontal_margin"
+        android:src="@android:drawable/ic_lock_idle_lock"
+        android:visibility="gone" />
+
+    <!-- 控制栏 -->
+    <com.example.ijk.player.IjkVideoControllerBottomView
+        android:id="@+id/bottomView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/shape_player_controller_bottom_bg"
+        android:layout_marginHorizontal="@dimen/exo_icon_horizontal_margin" />
+
+</FrameLayout>
