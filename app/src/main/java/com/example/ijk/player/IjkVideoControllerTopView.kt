@@ -15,6 +15,7 @@ import java.util.*
 class IjkVideoControllerTopView : LinearLayout {
 
     private var mIsVerticalScreen = true
+    private lateinit var mTvTitle: TextView
     private lateinit var mTvBattery: TextView
     private lateinit var mTvTime: TextView
 
@@ -49,11 +50,16 @@ class IjkVideoControllerTopView : LinearLayout {
                 }
             }
         }
+        this.mTvTitle = view.findViewById(R.id.tv_title)
         this.mTvBattery = view.findViewById(R.id.tv_battery)
         this.mTvTime = view.findViewById(R.id.tv_time)
         view.findViewById<View>(R.id.iv_more).setOnClickListener {
 
         }
+    }
+
+    fun setTitle(title: String?) {
+        this.mTvTitle.text = title
     }
 
     fun requestedOrientation(isVerticalScreen: Boolean) {

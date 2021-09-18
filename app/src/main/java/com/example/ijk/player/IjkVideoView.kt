@@ -6,12 +6,10 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.tencent.mmkv.MMKV
 import java.io.File
@@ -55,8 +53,7 @@ class IjkVideoView : FrameLayout {
         // 视频画面
         val playerView = view.findViewById<PlayerView>(R.id.playerView)
         playerView.controllerHideOnTouch = true
-        val renderersFactory = DefaultRenderersFactory(context.applicationContext)
-        val player = SimpleExoPlayer.Builder(context, renderersFactory).build()
+        val player = SimpleExoPlayer.Builder(context).build()
         player.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 println("onIsPlayingChanged -> isPlaying = $isPlaying")
@@ -107,7 +104,7 @@ class IjkVideoView : FrameLayout {
             this.mPlayerView.player?.let { player ->
                 val uri = Uri.fromFile(File(it))
                 val mediaItem = MediaItem.Builder().setUri(uri).build()
-                player.addMediaItem(mediaItem)
+                player.setMediaItem(mediaItem)
                 // 判断是否记录上次播放位置
                 val kv = MMKV.defaultMMKV()
                 val position = kv.decodeLong(it)
@@ -117,6 +114,7 @@ class IjkVideoView : FrameLayout {
                 player.playWhenReady = true
                 player.prepare()
             }
+            this.mControllerView.setTitle(title)
         }
     }
 
@@ -134,6 +132,7 @@ class IjkVideoView : FrameLayout {
             it.stop()
             it.release()
         }
+        this.mPlayerView.player = null
     }
 
     /**

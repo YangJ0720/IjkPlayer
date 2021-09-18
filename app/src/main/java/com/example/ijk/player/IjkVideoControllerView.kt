@@ -125,6 +125,10 @@ class IjkVideoControllerView : FrameLayout {
         this.mMediaPlayer = player
     }
 
+    fun setTitle(title: String?) {
+        this.mTopView.setTitle(title)
+    }
+
     private fun seekByLight(progress: Int) {
         this.mCenterView.seekByLight(progress)
     }
