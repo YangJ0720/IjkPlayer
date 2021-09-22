@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.base
 
 import android.app.Application
 import com.tencent.mmkv.MMKV

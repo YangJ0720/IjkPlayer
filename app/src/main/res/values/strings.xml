@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">IjkPlayer</string>
+
+    <string name="video_speed_x">%1$sx</string>
 </resources>

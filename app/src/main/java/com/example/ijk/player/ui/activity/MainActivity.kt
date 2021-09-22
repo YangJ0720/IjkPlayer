@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.activity
 
 import android.os.Build
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.os.Environment
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ijk.player.R
 import java.io.File
 
 class MainActivity : AppCompatActivity() {

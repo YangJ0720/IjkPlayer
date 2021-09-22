@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 /**
  * @author YangJ 视频播放行为接口
@@ -23,7 +23,12 @@ interface IjkMediaPlayerI {
     /**
      * 移动到视频指定位置
      */
-    fun seekToByGestureDetector(value: Long)
+    fun seekToByGestureDetector(value: Long, isPlayer: Boolean)
+
+    /**
+     * 倍速播放
+     */
+    fun speed(value: Float)
 
     /**
      * 获取视频源

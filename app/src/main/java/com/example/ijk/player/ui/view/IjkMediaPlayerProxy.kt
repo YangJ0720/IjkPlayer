@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 import com.google.android.exoplayer2.SimpleExoPlayer
 
@@ -8,19 +8,26 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI {
 
     override fun start() {
-        // player.onResume()
+        player.play()
     }
 
     override fun pause() {
-        // player.onPause()
+        player.pause()
     }
 
     override fun seekTo(value: Long) {
         player.seekTo(value)
     }
 
-    override fun seekToByGestureDetector(value: Long) {
+    override fun seekToByGestureDetector(value: Long, isPlayer: Boolean) {
+        player.seekTo(value)
+        if (isPlayer) {
+            player.play()
+        }
+    }
 
+    override fun speed(value: Float) {
+        player.setPlaybackSpeed(value)
     }
 
     override fun getDataSource(): String {

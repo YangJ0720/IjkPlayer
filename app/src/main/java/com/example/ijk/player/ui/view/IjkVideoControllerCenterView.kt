@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 import android.app.Activity
 import android.content.Context
@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
+import com.example.ijk.player.R
 import java.lang.ref.WeakReference
 
 class IjkVideoControllerCenterView : LinearLayout {

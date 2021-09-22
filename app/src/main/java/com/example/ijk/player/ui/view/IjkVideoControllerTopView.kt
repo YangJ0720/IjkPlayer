@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ijk.player.R
 import java.text.SimpleDateFormat
 import java.util.*
 

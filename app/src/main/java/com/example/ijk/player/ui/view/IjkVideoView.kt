@@ -1,4 +1,4 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 import android.content.Context
 import android.content.res.Configuration
@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import com.example.ijk.player.R
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -17,7 +18,7 @@ import java.io.File
 /**
  * @author YangJ 视频播放器
  */
-class IjkVideoView : FrameLayout {
+class IjkVideoView : FrameLayout, Player.Listener {
 
     private var mTitle: String? = null
     private var mPath: String? = null
@@ -54,29 +55,7 @@ class IjkVideoView : FrameLayout {
         val playerView = view.findViewById<PlayerView>(R.id.playerView)
         playerView.controllerHideOnTouch = true
         val player = SimpleExoPlayer.Builder(context).build()
-        player.addListener(object : Player.Listener {
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                println("onIsPlayingChanged -> isPlaying = $isPlaying")
-            }
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                when (playbackState) {
-                    Player.STATE_BUFFERING -> {
-                        println("onPlaybackStateChanged -> 正在加载")
-                    }
-                    Player.STATE_READY -> {
-                        println("onPlaybackStateChanged -> 正在播放")
-                    }
-                    Player.STATE_ENDED -> {
-                        println("onPlaybackStateChanged -> 播放结束")
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-        })
-        //
+        player.addListener(this)
         player.setAudioAttributes(AudioAttributes.DEFAULT, true)
         playerView.player = player
         this.mPlayerView = playerView
@@ -131,6 +110,7 @@ class IjkVideoView : FrameLayout {
             savePlayerPosition(it)
             it.stop()
             it.release()
+            it.removeListener(this)
         }
         this.mPlayerView.player = null
     }
@@ -158,6 +138,28 @@ class IjkVideoView : FrameLayout {
      */
     fun getRequestedOrientation(): Int {
         return this.mOrientation
+    }
+
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        when (playbackState) {
+            Player.STATE_BUFFERING -> {
+                println("正在缓冲")
+            }
+            Player.STATE_READY -> {
+                println("开始播放")
+                this.mPlayerView.player?.let {
+                    val controllerView = this.mControllerView
+                    controllerView.player(it.isPlaying)
+                    controllerView.setMax((it.duration / 1000).toInt())
+                }
+            }
+            Player.STATE_ENDED -> {
+                println("结束播放")
+            }
+            else -> {
+
+            }
+        }
     }
 
 }

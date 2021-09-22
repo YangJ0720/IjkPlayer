@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="color_player_controller_bg_center">#CC999999</color>
+    <color name="color_player_controller_speed_bg">#CC000000</color>
 </resources>

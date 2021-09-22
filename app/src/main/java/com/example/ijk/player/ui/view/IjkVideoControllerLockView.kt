@@ -1,12 +1,11 @@
-package com.example.ijk.player
+package com.example.ijk.player.ui.view
 
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.example.ijk.player.R
 
 /**
  * @author YangJ 锁定控制
@@ -32,7 +31,7 @@ class IjkVideoControllerLockView : AppCompatImageView {
     }
 
     private fun initialize() {
-        setBackground(Color.GRAY)
+        setImageResource(R.drawable.ic_player_unlock)
     }
 
     fun isLock(): Boolean {
@@ -42,14 +41,14 @@ class IjkVideoControllerLockView : AppCompatImageView {
     fun toggle(): Boolean {
         val lock = !this.mIsLock
         val orientation: Int
-        val color = if (lock) {
+        val resId = if (lock) {
             orientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
-            Color.RED
+            R.drawable.ic_player_lock
         } else {
             orientation = ActivityInfo.SCREEN_ORIENTATION_USER
-            Color.GRAY
+            R.drawable.ic_player_unlock
         }
-        setBackground(color)
+        setImageResource(resId)
         // 设置Activity方向锁定 or 解锁
         if (context is Activity) {
             (context as Activity).requestedOrientation = orientation
@@ -59,10 +58,4 @@ class IjkVideoControllerLockView : AppCompatImageView {
         return lock
     }
 
-    private fun setBackground(color: Int) {
-        val drawable = GradientDrawable()
-        drawable.setColor(color)
-        drawable.cornerRadius = 10.0f
-        background = drawable
-    }
 }
