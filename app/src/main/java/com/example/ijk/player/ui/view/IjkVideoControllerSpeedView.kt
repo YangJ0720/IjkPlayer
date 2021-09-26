@@ -5,10 +5,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import com.example.ijk.player.R
-import com.example.ijk.player.adapter.IjkVideoControllerSpeedAdapter
 
 /**
  * @author YangJ 倍速
@@ -48,26 +47,49 @@ class IjkVideoControllerSpeedView : FrameLayout {
         view.setOnClickListener {
             removeView()
         }
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = IjkVideoControllerSpeedAdapter(
-            context,
-            arrayListOf(
-                SPEED_0_5_0_X,
-                SPEED_0_7_5_X,
-                SPEED_0_1_0_X,
-                SPEED_0_1_5_X,
-                SPEED_0_2_0_X,
-                SPEED_0_3_0_X
-            )
-        )
-        adapter.setOnItemClickListener(object : IjkVideoControllerSpeedAdapter.OnItemClickListener {
-            override fun onItemClick(value: Float) {
-                this@IjkVideoControllerSpeedView.mCallback?.callback(value)
-                removeView()
+        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val value = when (checkedId) {
+                R.id.rb_3_0 -> {
+                    SPEED_0_3_0_X
+                }
+                R.id.rb_2_0 -> {
+                    SPEED_0_2_0_X
+                }
+                R.id.rb_1_5 -> {
+                    SPEED_0_1_5_X
+                }
+                R.id.rb_1_0 -> {
+                    SPEED_0_1_0_X
+                }
+                R.id.rb_0_7_5 -> {
+                    SPEED_0_7_5_X
+                }
+                R.id.rb_0_5 -> {
+                    SPEED_0_5_0_X
+                }
+                else -> {
+                    SPEED_0_1_0_X
+                }
             }
-        })
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+            this.mCallback?.callback(value)
+            removeView()
+        }
+        view.findViewById<RadioButton>(R.id.rb_3_0).text = convert(SPEED_0_3_0_X)
+        view.findViewById<RadioButton>(R.id.rb_2_0).text = convert(SPEED_0_2_0_X)
+        view.findViewById<RadioButton>(R.id.rb_1_5).text = convert(SPEED_0_1_5_X)
+        view.findViewById<RadioButton>(R.id.rb_1_0).text = convert(SPEED_0_1_0_X)
+        view.findViewById<RadioButton>(R.id.rb_0_7_5).text = convert(SPEED_0_7_5_X)
+        view.findViewById<RadioButton>(R.id.rb_0_5).text = convert(SPEED_0_5_0_X)
+    }
+
+    private fun convert(float: Float): String {
+        val value = if (SPEED_0_7_5_X == float) {
+            String.format("%.2f", float)
+        } else {
+            String.format("%.1f", float)
+        }
+        return context.getString(R.string.video_speed_x, value)
     }
 
     private fun removeView() {

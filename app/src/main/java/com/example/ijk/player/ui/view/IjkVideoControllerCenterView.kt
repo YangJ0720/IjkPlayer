@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -23,8 +24,10 @@ class IjkVideoControllerCenterView : LinearLayout {
     companion object {
         // 屏幕亮度默认值
         private const val DEF_LIGHT = 0.16f
+
         // 屏幕亮度最大值
         private const val MAX_LIGHT = 100
+
         // 媒体音量最大值
         private const val MAX_VOICE = 300
     }
@@ -50,15 +53,25 @@ class IjkVideoControllerCenterView : LinearLayout {
     }
 
     private fun initialize(context: Context) {
+        val metrics = context.resources.displayMetrics
         val drawable = GradientDrawable()
-        drawable.setColor(ContextCompat.getColor(context, R.color.color_player_controller_bg_center))
-        drawable.cornerRadius = 10.0f
+        drawable.setColor(
+            ContextCompat.getColor(
+                context,
+                R.color.color_player_controller_bg_center
+            )
+        )
+        val radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15.0f, metrics)
+        drawable.cornerRadius = radius
         background = drawable
         //
         this.mHandler = MainHandler(this)
         //
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.view_ijk_video_controller_center, this)
+        val left = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15.0f, metrics).toInt()
+        val top = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7.0f, metrics).toInt()
+        view.setPadding(left, top, left, top)
         this.mImageView = view.findViewById(R.id.imageView)
         this.mProgressBar = view.findViewById(R.id.progressBar)
     }
@@ -95,7 +108,7 @@ class IjkVideoControllerCenterView : LinearLayout {
             window.attributes = params
             //
             seekTo((params.screenBrightness * MAX_LIGHT).toInt(), MAX_LIGHT)
-            this.mImageView.setImageResource(R.drawable.ic_light)
+            this.mImageView.setImageResource(R.drawable.ic_player_light)
         }
     }
 
@@ -128,7 +141,7 @@ class IjkVideoControllerCenterView : LinearLayout {
         manager.setStreamVolume(AudioManager.STREAM_MUSIC, value / 20, flags)
         //
         seekTo(value, MAX_VOICE)
-        this.mImageView.setImageResource(R.drawable.ic_voice)
+        this.mImageView.setImageResource(R.drawable.ic_player_voice)
     }
 
     private fun seekTo(progress: Int, max: Int) {

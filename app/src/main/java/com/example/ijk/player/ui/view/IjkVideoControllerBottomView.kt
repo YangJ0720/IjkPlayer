@@ -14,8 +14,7 @@ import android.widget.TextView
 import com.example.ijk.player.R
 import java.io.File
 import java.lang.ref.WeakReference
-import java.math.BigDecimal
-import java.text.DecimalFormat
+import java.util.*
 
 /**
  * @author YangJ 视频播放器底部控制器
@@ -29,6 +28,7 @@ class IjkVideoControllerBottomView : LinearLayout {
     private lateinit var mIvPlay: ImageView
     private lateinit var mSeekBar: SeekBar
     private lateinit var mTvDuration: TextView
+    private lateinit var mTvSpeed: TextView
 
     // 播放组件
     private var mMediaPlayer: IjkMediaPlayerI? = null
@@ -112,6 +112,7 @@ class IjkVideoControllerBottomView : LinearLayout {
                     val speedView = IjkVideoControllerSpeedView(context)
                     speedView.setCallback(object :IjkVideoControllerSpeedView.Callback {
                         override fun callback(value: Float) {
+                            tvSpeed.tag = value
                             tvSpeed.text = convert(value)
                         }
                     })
@@ -119,6 +120,7 @@ class IjkVideoControllerBottomView : LinearLayout {
                 }
             }
         }
+        this.mTvSpeed = tvSpeed
     }
 
     private fun convert(float: Float): String {
@@ -134,11 +136,28 @@ class IjkVideoControllerBottomView : LinearLayout {
     private fun refresh() {
         this.mMediaPlayer?.let { player ->
             val seekBar = this.mSeekBar
-            val progress = (player.getCurrentPosition() / 1000).toInt()
-            seekBar.progress = progress
+            val currentPosition = player.getCurrentPosition()
+            seekBar.progress = (currentPosition / 1000).toInt()
             //
-            val sb = StringBuilder().append(progress).append(File.separator).append(seekBar.max)
+            val position = formatDuration(currentPosition)
+            val format = formatDuration(seekBar.max * 1000L)
+            val sb = StringBuilder().append(position).append(File.separator).append(format)
             this.mTvDuration.text = sb
+        }
+    }
+
+    private fun formatDuration(duration: Long): String {
+        if (duration <= 0 || duration >= 24 * 3600 * 1000) {
+            return "00:00"
+        }
+        val totalSeconds = duration / 1000
+        val seconds = totalSeconds % 60
+        val minutes = (totalSeconds / 60) % 60
+        val hours = totalSeconds / 3600
+        return if (hours > 0) {
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            String.format("%02d:%02d", minutes, seconds)
         }
     }
 
@@ -150,10 +169,10 @@ class IjkVideoControllerBottomView : LinearLayout {
         this.mSeekBar.max = max
     }
 
-    fun seekToByGestureDetector(progress: Int) {
+    fun seekToByGestureDetector(progress: Int, isPlayer: Boolean) {
         this.mMediaPlayer?.let { player ->
             val position = player.getCurrentPosition() + progress
-            player.seekTo(position)
+            player.seekToByGestureDetector(position, isPlayer)
             this.mSeekBar.progress = (position / 1000).toInt()
         }
     }
@@ -167,6 +186,15 @@ class IjkVideoControllerBottomView : LinearLayout {
             this.mHandler.removeMessageToRefresh()
         }
         this.mIsPlayer = !isPlayer
+    }
+
+    fun getSpeed(): Float? {
+        val tag = this.mTvSpeed.tag
+        return if (tag is Float) {
+            tag
+        } else {
+            null
+        }
     }
 
     override fun onDetachedFromWindow() {

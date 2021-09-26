@@ -18,11 +18,6 @@ interface IjkMediaPlayerI {
     /**
      * 移动到视频指定位置
      */
-    fun seekTo(value: Long)
-
-    /**
-     * 移动到视频指定位置
-     */
     fun seekToByGestureDetector(value: Long, isPlayer: Boolean)
 
     /**
@@ -33,7 +28,7 @@ interface IjkMediaPlayerI {
     /**
      * 获取视频源
      */
-    fun getDataSource(): String
+    fun getDataSource(): String?
 
     /**
      * 获取视频当前播放位置

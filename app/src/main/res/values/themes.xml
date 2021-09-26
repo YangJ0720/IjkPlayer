@@ -21,4 +21,14 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <!-- PlayerActivity -> ProgressBar -->
+    <style name="Player.Theme.ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/layer_player_progress_bar</item>
+    </style>
+
+    <!-- PlayerActivity -> ProgressBar -->
+    <style name="Player.Duration.Theme.ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/layer_player_seek_bar</item>
+    </style>
+
 </resources>

@@ -54,15 +54,17 @@ class IjkVideoView : FrameLayout, Player.Listener {
         // 视频画面
         val playerView = view.findViewById<PlayerView>(R.id.playerView)
         playerView.controllerHideOnTouch = true
+        this.mPlayerView = playerView
+        // 视频控制器
+        this.mControllerView = view.findViewById(R.id.controllerView)
+    }
+
+    private fun initializePlayer() {
         val player = SimpleExoPlayer.Builder(context).build()
         player.addListener(this)
         player.setAudioAttributes(AudioAttributes.DEFAULT, true)
-        playerView.player = player
-        this.mPlayerView = playerView
-        // 视频控制器
-        val controllerView = view.findViewById<IjkVideoControllerView>(R.id.controllerView)
-        controllerView.setupMediaPlayer(IjkMediaPlayerProxy(player))
-        this.mControllerView = controllerView
+        this.mPlayerView.player = player
+        this.mControllerView.setupMediaPlayer(IjkMediaPlayerProxy(player))
     }
 
     private fun savePlayerPosition(player: Player) {
@@ -98,11 +100,14 @@ class IjkVideoView : FrameLayout, Player.Listener {
     }
 
     fun onResume() {
+        initializePlayer()
+        setDataSource(this.mTitle, this.mPath)
         this.mPlayerView.onResume()
     }
 
     fun onPause() {
         this.mPlayerView.onPause()
+        release()
     }
 
     fun release() {

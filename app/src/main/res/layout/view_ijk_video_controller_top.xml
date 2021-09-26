@@ -5,8 +5,10 @@
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="5dp"
+        android:padding="10dp"
         android:src="@drawable/ic_player_back" />
 
     <TextView
@@ -14,7 +16,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_battery"
@@ -32,8 +35,10 @@
 
     <ImageView
         android:id="@+id/iv_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="5dp"
+        android:padding="10dp"
         android:src="@drawable/ic_player_other" />
 
 </merge>

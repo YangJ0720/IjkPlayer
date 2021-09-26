@@ -15,10 +15,6 @@ class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI
         player.pause()
     }
 
-    override fun seekTo(value: Long) {
-        player.seekTo(value)
-    }
-
     override fun seekToByGestureDetector(value: Long, isPlayer: Boolean) {
         player.seekTo(value)
         if (isPlayer) {
@@ -30,8 +26,8 @@ class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI
         player.setPlaybackSpeed(value)
     }
 
-    override fun getDataSource(): String {
-        return "player.dataSource"
+    override fun getDataSource(): String? {
+        return player.currentMediaItem?.playbackProperties?.uri?.path
     }
 
     override fun getCurrentPosition(): Long {

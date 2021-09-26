@@ -5,10 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.FrameLayout
 import com.example.ijk.player.R
 import java.lang.ref.WeakReference
@@ -32,10 +29,16 @@ class IjkVideoControllerView : FrameLayout {
         // 横向滑动
         private const val DIRECTION_HORIZONTAL = 2
 
+        // 全屏模式 -> 屏幕边缘滑动判定
+        private const val DURATION_FULLSCREEN = 100
+
     }
 
     // 滑动缓冲阀值
     private var mScrollBuffer = 0.5f
+
+    // 是否长按3倍速播放
+    private var mIsLongPress = false
 
     // 滑动方向
     private var mDirection = DIRECTION_UNKNOWN
@@ -49,7 +52,6 @@ class IjkVideoControllerView : FrameLayout {
     private lateinit var mCenterView: IjkVideoControllerCenterView
     private lateinit var mBottomView: IjkVideoControllerBottomView
     private lateinit var mLockView: IjkVideoControllerLockView
-    private lateinit var mGestureDetector: GestureDetector
 
     constructor(context: Context) : super(context) {
         initialize(context)
@@ -78,7 +80,8 @@ class IjkVideoControllerView : FrameLayout {
         //
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.view_ijk_video_controller, this)
-        this.mTopView = view.findViewById(R.id.videoControllerTopView)
+        val topView = view.findViewById<IjkVideoControllerTopView>(R.id.videoControllerTopView)
+        this.mTopView = topView
         this.mCenterView = view.findViewById(R.id.videoControllerCenterView)
         this.mBottomView = view.findViewById<IjkVideoControllerBottomView>(R.id.bottomView).apply {
             setCallback(object : IjkVideoControllerBottomView.Callback {
@@ -126,17 +129,20 @@ class IjkVideoControllerView : FrameLayout {
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
+                // 如果是锁定状态，不需要响应手势操作
                 if (isLock()) return true
+                // 如果是全屏状态，需要判断手势是否从屏幕边缘开始滑动
+                if (e1.x + DURATION_FULLSCREEN > this@IjkVideoControllerView.mScreenWidth || e1.y < DURATION_FULLSCREEN) return true
                 val x = abs(distanceX)
                 val y = abs(distanceY)
                 if (x > y) {
                     // 左右滑动
                     val direction = this@IjkVideoControllerView.mDirection
                     if (DIRECTION_UNKNOWN == direction) {
-                        scrollHorizontal(distanceX)
+                        scrollHorizontal(distanceX, false)
                         this@IjkVideoControllerView.mDirection = DIRECTION_HORIZONTAL
                     } else if (DIRECTION_HORIZONTAL == direction) {
-                        scrollHorizontal(distanceX)
+                        scrollHorizontal(distanceX, false)
                     }
                 } else if (x < y) {
                     // 上下滑动
@@ -149,14 +155,38 @@ class IjkVideoControllerView : FrameLayout {
                     }
 
                 }
-                return true
+                return false
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                val value = IjkVideoControllerSpeedView.SPEED_0_3_0_X
+                this@IjkVideoControllerView.mMediaPlayer?.speed(value)
+                this@IjkVideoControllerView.mIsLongPress = true
             }
 
         }
-        this.mGestureDetector = GestureDetector(context, listener)
+        val gestureDetector = GestureDetector(context, listener)
+        setOnTouchListener { v, event ->
+            if (!gestureDetector.onTouchEvent(event) && MotionEvent.ACTION_UP == event?.action) {
+                val direction = this.mDirection
+                if (DIRECTION_HORIZONTAL == direction) {
+                    scrollHorizontal(0.0f, true)
+                }
+                this.mDirection = DIRECTION_UNKNOWN
+                if (this.mIsLongPress) {
+                    val speed = this.mBottomView.getSpeed()
+                    val value = speed ?: IjkVideoControllerSpeedView.SPEED_0_1_0_X
+                    this.mMediaPlayer?.speed(value)
+                    this.mIsLongPress = false
+                }
+                v.performClick()
+            }
+            true
+        }
     }
 
     fun setupMediaPlayer(player: IjkMediaPlayerI) {
+        this.mTopView.setupMediaPlayer(player)
         this.mBottomView.setupMediaPlayer(player)
         this.mMediaPlayer = player
     }
@@ -198,7 +228,7 @@ class IjkVideoControllerView : FrameLayout {
         }
     }
 
-    private fun scrollHorizontal(distanceX: Float) {
+    private fun scrollHorizontal(distanceX: Float, isPlayer: Boolean) {
         val buffer = this.mScrollBuffer
         if (buffer in 0.0f..1.0f) {
             this.mScrollBuffer += 0.1f
@@ -206,11 +236,18 @@ class IjkVideoControllerView : FrameLayout {
         } else {
             this.mScrollBuffer = 0.5f
         }
-        if (distanceX > 0) {
-            this.mBottomView.seekToByGestureDetector(-1000)
-        } else if (distanceX < 0) {
-            this.mBottomView.seekToByGestureDetector(1000)
+        val progress = when {
+            distanceX > 0 -> {
+                -1000
+            }
+            distanceX < 0 -> {
+                1000
+            }
+            else -> {
+                0
+            }
         }
+        this.mBottomView.seekToByGestureDetector(progress, false)
     }
 
     private fun setVisibility() {
@@ -238,14 +275,6 @@ class IjkVideoControllerView : FrameLayout {
         this.mBottomView.visibility = View.GONE
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (MotionEvent.ACTION_UP == event?.action) {
-            this.mDirection = DIRECTION_UNKNOWN
-            return true
-        }
-        return this.mGestureDetector.onTouchEvent(event)
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         this.mHandler.removeMessage()
@@ -268,4 +297,5 @@ class IjkVideoControllerView : FrameLayout {
             this.mReference.get()?.setVisibilityToGone()
         }
     }
+
 }

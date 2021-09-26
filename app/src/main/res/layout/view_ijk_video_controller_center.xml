@@ -5,13 +5,14 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="16dp"
+        android:layout_height="16dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content" />
+        style="@style/Player.Theme.ProgressBar"
+        android:layout_width="86dp"
+        android:layout_height="2dp"
+        android:layout_marginStart="8dp" />
 
 </merge>

@@ -3,17 +3,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/color_player_controller_speed_bg">
+        android:background="@color/color_player_controller_speed_bg"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="200dp"
+        <RadioButton
+            android:id="@+id/rb_3_0"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
-    </FrameLayout>
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_2_0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_1_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_1_0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_0_7_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/rb_0_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white" />
+    </RadioGroup>
 
 </merge>
