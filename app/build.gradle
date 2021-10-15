@@ -43,6 +43,4 @@ dependencies {
     // exo
     implementation 'com.google.android.exoplayer:exoplayer:2.15.0'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.15.0'
-    // kv
-    implementation 'com.tencent:mmkv:1.0.10'
 }

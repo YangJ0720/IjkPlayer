@@ -6,12 +6,14 @@ import android.os.Looper
 import android.os.Message
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.example.ijk.player.R
+import com.example.ijk.player.ui.activity.PlayActivity
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -28,6 +30,7 @@ class IjkVideoControllerBottomView : LinearLayout {
     private lateinit var mIvPlay: ImageView
     private lateinit var mSeekBar: SeekBar
     private lateinit var mTvDuration: TextView
+    private lateinit var mIvWindow: ImageView
     private lateinit var mTvSpeed: TextView
 
     // 播放组件
@@ -70,6 +73,7 @@ class IjkVideoControllerBottomView : LinearLayout {
                 this.setImageResource(resId)
             }
         }
+        // 进度
         this.mSeekBar = view.findViewById<SeekBar>(R.id.seekBar).apply {
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -101,7 +105,18 @@ class IjkVideoControllerBottomView : LinearLayout {
 
             })
         }
+        // 时长
         this.mTvDuration = view.findViewById(R.id.tv_duration)
+        // 浮窗
+        val ivWindow = view.findViewById<ImageView>(R.id.iv_window)
+        ivWindow.setOnClickListener {
+            if (context is PlayActivity) {
+                context.showFloatWindow()
+                context.finish()
+            }
+        }
+        this.mIvWindow = ivWindow
+        // 倍速
         val tvSpeed = view.findViewById<TextView>(R.id.tv_speed)
         tvSpeed.text = convert(IjkVideoControllerSpeedView.SPEED_0_1_0_X)
         tvSpeed.setOnClickListener {
@@ -110,7 +125,9 @@ class IjkVideoControllerBottomView : LinearLayout {
                 val viewParent = parent
                 if (viewParent is ViewGroup) {
                     val speedView = IjkVideoControllerSpeedView(context)
-                    speedView.setCallback(object :IjkVideoControllerSpeedView.Callback {
+                    val speed = getSpeed() ?: IjkVideoControllerSpeedView.SPEED_0_1_0_X
+                    speedView.setSpeed(speed)
+                    speedView.setCallback(object : IjkVideoControllerSpeedView.Callback {
                         override fun callback(value: Float) {
                             tvSpeed.tag = value
                             tvSpeed.text = convert(value)
@@ -162,6 +179,12 @@ class IjkVideoControllerBottomView : LinearLayout {
     }
 
     fun setupMediaPlayer(player: IjkMediaPlayerI) {
+        if (player.isFloating()) {
+            this.mSeekBar.visibility = View.GONE
+            this.mTvDuration.visibility = View.GONE
+            this.mIvWindow.visibility = View.GONE
+            this.mTvSpeed.visibility = View.GONE
+        }
         this.mMediaPlayer = player
     }
 

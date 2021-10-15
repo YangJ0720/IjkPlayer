@@ -23,6 +23,7 @@ class IjkVideoControllerSpeedView : FrameLayout {
         const val SPEED_0_3_0_X = 3.0f
     }
 
+    private lateinit var mRadioGroup: RadioGroup
     private var mCallback: Callback? = null
 
     constructor(context: Context) : super(context) {
@@ -75,6 +76,7 @@ class IjkVideoControllerSpeedView : FrameLayout {
             this.mCallback?.callback(value)
             removeView()
         }
+        this.mRadioGroup = radioGroup
         view.findViewById<RadioButton>(R.id.rb_3_0).text = convert(SPEED_0_3_0_X)
         view.findViewById<RadioButton>(R.id.rb_2_0).text = convert(SPEED_0_2_0_X)
         view.findViewById<RadioButton>(R.id.rb_1_5).text = convert(SPEED_0_1_5_X)
@@ -97,6 +99,33 @@ class IjkVideoControllerSpeedView : FrameLayout {
         if (viewParent is ViewGroup) {
             viewParent.removeView(this)
         }
+    }
+
+    fun setSpeed(speed: Float) {
+        val id = when (speed) {
+            SPEED_0_3_0_X -> {
+                R.id.rb_3_0
+            }
+            SPEED_0_2_0_X -> {
+                R.id.rb_2_0
+            }
+            SPEED_0_1_5_X -> {
+                R.id.rb_1_5
+            }
+            SPEED_0_1_0_X -> {
+                R.id.rb_1_0
+            }
+            SPEED_0_7_5_X -> {
+                R.id.rb_0_7_5
+            }
+            SPEED_0_5_0_X -> {
+                R.id.rb_0_5
+            }
+            else -> {
+                R.id.rb_1_0
+            }
+        }
+        this.mRadioGroup.check(id)
     }
 
     fun setCallback(callback: Callback) {

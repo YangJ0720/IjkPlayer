@@ -13,6 +13,25 @@
         android:gravity="center_vertical"
         android:orientation="horizontal" />
 
+    <!-- 定位至上次播放位置-->
+    <ViewStub
+        android:id="@+id/videoControllerPositionView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout="@layout/view_ijk_video_controller_position" />
+
+    <!-- 快进、快退和倍速播放tips -->
+    <TextView
+        android:id="@+id/videoControllerTipsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
     <!-- 亮度、音量 -->
     <com.example.ijk.player.ui.view.IjkVideoControllerCenterView
         android:id="@+id/videoControllerCenterView"

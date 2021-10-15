@@ -5,7 +5,8 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 /**
  * @author YangJ 视频播放行为接口实现类
  */
-class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI {
+class IjkMediaPlayerProxy(private val player: SimpleExoPlayer, private val isFloating: Boolean) :
+    IjkMediaPlayerI {
 
     override fun start() {
         player.play()
@@ -26,6 +27,10 @@ class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI
         player.setPlaybackSpeed(value)
     }
 
+    override fun getTitle(): String? {
+        return null
+    }
+
     override fun getDataSource(): String? {
         return player.currentMediaItem?.playbackProperties?.uri?.path
     }
@@ -36,5 +41,9 @@ class IjkMediaPlayerProxy(private val player: SimpleExoPlayer) : IjkMediaPlayerI
 
     override fun getDuration(): Long {
         return player.duration
+    }
+
+    override fun isFloating(): Boolean {
+        return isFloating
     }
 }

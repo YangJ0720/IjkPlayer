@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.example.ijk.player.R
+import com.example.ijk.player.service.FloatingService
+import com.example.ijk.player.ui.activity.PlayActivity
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,9 +27,11 @@ import java.util.*
 class IjkVideoControllerTopView : LinearLayout, LifecycleEventObserver {
 
     private var mIsVerticalScreen = true
+    private lateinit var mIvBack: ImageView
     private lateinit var mTvTitle: TextView
-    private lateinit var mTvBattery: TextView
+    private lateinit var mBatteryView: ExoVideoBatteryView
     private lateinit var mTvTime: TextView
+    private lateinit var mIvMore: ImageView
 
     // 播放组件
     private var mMediaPlayer: IjkMediaPlayerI? = null
@@ -51,40 +56,56 @@ class IjkVideoControllerTopView : LinearLayout, LifecycleEventObserver {
     private fun initialize(context: Context) {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.view_ijk_video_controller_top, this)
-        view.findViewById<View>(R.id.iv_back).setOnClickListener {
-            if (context is AppCompatActivity) {
-                if (this.mIsVerticalScreen) {
-                    // 竖屏模式
-                    context.finish()
-                } else {
-                    // 横屏模式
-                    val portrait = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    context.requestedOrientation = portrait
+        val ivBack = view.findViewById<ImageView>(R.id.iv_back)
+        ivBack.setOnClickListener {
+            val isFloating = this.mMediaPlayer?.isFloating() ?: false
+            if (isFloating) {
+                val intent = Intent(context, FloatingService::class.java)
+                context.stopService(intent)
+            } else {
+                if (context is AppCompatActivity) {
+                    if (this.mIsVerticalScreen) {
+                        // 竖屏模式
+                        context.finish()
+                    } else {
+                        // 横屏模式
+                        val portrait = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        context.requestedOrientation = portrait
+                    }
                 }
             }
         }
+        this.mIvBack = ivBack
         this.mTvTitle = view.findViewById(R.id.tv_title)
         // 电量
-        val tvBattery = view.findViewById<TextView>(R.id.tv_battery)
+        val batteryView = view.findViewById<ExoVideoBatteryView>(R.id.batteryView)
         val manager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-        val battery = StringBuilder()
-        battery.append(manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))
-        battery.append("%")
-        tvBattery.text = battery
-        this.mTvBattery = tvBattery
+        batteryView.setLevel(manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))
+        this.mBatteryView = batteryView
         // 时间
         val tvTime = view.findViewById<TextView>(R.id.tv_time)
         tvTime.text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         this.mTvTime = tvTime
-        view.findViewById<View>(R.id.iv_more).setOnClickListener {
-            val viewParent = parent
-            if (viewParent is ViewGroup) {
-                val infoView = IjkVideoControllerInfoView(context)
-                val path = this.mMediaPlayer?.getDataSource()
-                infoView.setPath(path)
-                viewParent.addView(infoView)
+        val ivMore = view.findViewById<ImageView>(R.id.iv_more)
+        ivMore.setOnClickListener {
+            this.mMediaPlayer?.let {
+                if (it.isFloating()) {
+                    val intent = Intent(context, FloatingService::class.java)
+                    context.stopService(intent)
+                    it.getDataSource()?.let { path ->
+                        PlayActivity.launch(context, "Title", path)
+                    }
+                } else {
+                    val viewParent = parent
+                    if (viewParent is ViewGroup) {
+                        val infoView = IjkVideoControllerInfoView(context)
+                        infoView.setPath(it.getDataSource())
+                        viewParent.addView(infoView)
+                    }
+                }
             }
         }
+        this.mIvMore = ivMore
         //
         if (context is AppCompatActivity) {
             context.lifecycle.addObserver(this)
@@ -96,7 +117,7 @@ class IjkVideoControllerTopView : LinearLayout, LifecycleEventObserver {
     }
 
     fun requestedOrientation(isVerticalScreen: Boolean) {
-        val tvBattery = this.mTvBattery
+        val batteryView = this.mBatteryView
         val tvTime = this.mTvTime
         val visibility = if (isVerticalScreen) {
             refreshToBattery(-1)
@@ -105,25 +126,30 @@ class IjkVideoControllerTopView : LinearLayout, LifecycleEventObserver {
         } else {
             View.VISIBLE
         }
-        tvBattery.visibility = visibility
+        batteryView.visibility = visibility
         tvTime.visibility = visibility
         this.mIsVerticalScreen = isVerticalScreen
     }
 
     fun setupMediaPlayer(player: IjkMediaPlayerI) {
+        if (player.isFloating()) {
+            this.mIvBack.setImageResource(R.drawable.ic_player_exit)
+            this.mTvTitle.visibility = View.INVISIBLE
+            this.mBatteryView.visibility = View.GONE
+            this.mTvTime.visibility = View.GONE
+            this.mIvMore.setImageResource(R.drawable.ic_player_full)
+        }
         this.mMediaPlayer = player
     }
 
     private fun refreshToBattery(level: Int) {
-        val battery = if (level < 0) {
-            val manager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-            val sb = StringBuilder()
-            sb.append(manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))
-            sb.append("%")
+        val battery = if (level >= 0) {
+            level
         } else {
-            StringBuilder().append(level).append("%")
+            val manager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+            manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
         }
-        this.mTvBattery.text = battery
+        this.mBatteryView.setLevel(battery)
     }
 
     private fun refreshToTime() {

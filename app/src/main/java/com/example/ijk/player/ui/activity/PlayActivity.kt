@@ -5,13 +5,17 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
-import android.os.Bundle
+import android.graphics.PixelFormat
+import android.os.*
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ijk.player.ui.view.IjkVideoView
 import com.example.ijk.player.R
+import com.example.ijk.player.service.FloatingService
+import java.io.File
 
 /**
  * @author YangJ 视频播放界面
@@ -69,6 +73,11 @@ class PlayActivity : AppCompatActivity() {
         val url = intent.getStringExtra(EXTRA_URL)
         videoView.setDataSource(title, url)
         this.mVideoView = videoView
+    }
+
+    fun showFloatWindow() {
+        val intent = Intent(this, FloatingService::class.java)
+        startService(intent)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

@@ -7,4 +7,6 @@
     <string name="video_info_path">路径：</string>
     <string name="video_info_date">时间：</string>
     <string name="video_speed_x">%1$sx</string>
+    <string name="video_speed_3x_tips">3x快进</string>
+    <string name="video_position_last">已定位至上次播放位置</string>
 </resources>

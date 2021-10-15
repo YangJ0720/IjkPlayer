@@ -90,7 +90,7 @@ class IjkVideoControllerCenterView : LinearLayout {
                 params.screenBrightness
             }
             //
-            val unit = 0.01f
+            val unit = 0.05f
             val brightness = if (progress > 1.0f) {
                 if (screenBrightness + unit > 1) {
                     1.0f
@@ -116,31 +116,24 @@ class IjkVideoControllerCenterView : LinearLayout {
      * 设置音量（0 ~ 15）
      */
     fun seekByVoice(progress: Int) {
-        //
         val manager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        // val max = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        // val cur = manager.getStreamVolume(AudioManager.STREAM_MUSIC) * 20
-        val cur = this.mProgressBar.progress
-        //
-        val unit = 5
-        val value = if (progress > 0) {
-            if (cur + unit > MAX_VOICE) {
-                MAX_VOICE
-            } else {
-                cur + unit
+        val curVolume = manager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val value = when {
+            progress > 0 -> {
+                curVolume + 1
             }
-        } else {
-            if (cur - unit < 0) {
+            progress < 0 -> {
+                curVolume - 1
+            }
+            else -> {
                 0
-            } else {
-                cur - unit
             }
         }
         //
         val flags = AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE
-        manager.setStreamVolume(AudioManager.STREAM_MUSIC, value / 20, flags)
+        manager.setStreamVolume(AudioManager.STREAM_MUSIC, value, flags)
         //
-        seekTo(value, MAX_VOICE)
+        seekTo(value * 20, MAX_VOICE)
         this.mImageView.setImageResource(R.drawable.ic_player_voice)
     }
 

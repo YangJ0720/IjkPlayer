@@ -26,6 +26,11 @@ interface IjkMediaPlayerI {
     fun speed(value: Float)
 
     /**
+     * 获取视频标题
+     */
+    fun getTitle(): String?
+
+    /**
      * 获取视频源
      */
     fun getDataSource(): String?
@@ -39,4 +44,9 @@ interface IjkMediaPlayerI {
      * 获取视频播放时长
      */
     fun getDuration(): Long
+
+    /**
+     * 是否为悬浮窗模式
+     */
+    fun isFloating(): Boolean
 }

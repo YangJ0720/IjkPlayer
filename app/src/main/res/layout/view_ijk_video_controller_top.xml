@@ -16,15 +16,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/tv_battery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/tv_time"
@@ -32,6 +28,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:textColor="@android:color/white" />
+
+    <com.example.ijk.player.ui.view.ExoVideoBatteryView
+        android:id="@+id/batteryView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp" />
 
     <ImageView
         android:id="@+id/iv_more"
